@@ -1,6 +1,18 @@
 ﻿# Build script for Prometheus
 
 $SettingsPath = "$PSScriptRoot\settings.json"
+$DefaultSettingsPath = "$PSScriptRoot\settings_default.json"
+
+if (-not (Test-Path $SettingsPath)) {
+    if (Test-Path $DefaultSettingsPath) {
+        Write-Host "settings.json not found. Initializing from default_settings.json..." -ForegroundColor Yellow
+        Copy-Item -Path $DefaultSettingsPath -Destination $SettingsPath -Force
+    } else {
+        Write-Host "Error: Neither settings.json nor default_settings.json was found!" -ForegroundColor Red
+        exit 1
+    }
+}
+
 $Settings = Get-Content -Path $SettingsPath | ConvertFrom-Json
 
 $OverwatchDir = $Settings.OverwatchDir
